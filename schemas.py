@@ -12,9 +12,9 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
-# Example schemas (replace with your own):
+# Example schemas (you can keep or remove if not needed):
 
 class User(BaseModel):
     """
@@ -38,11 +38,16 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Kanban app schemas
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Column(BaseModel):
+    name: str = Field(..., description="Column title, e.g., To Do")
+    position: int = Field(0, ge=0, description="Column order index")
+
+class Task(BaseModel):
+    title: str = Field(..., description="Short task title")
+    description: Optional[str] = Field(None, description="Task details")
+    column_id: str = Field(..., description="ID of the column this task belongs to")
+    position: int = Field(0, ge=0, description="Position within the column")
+    priority: Optional[str] = Field("normal", description="low | normal | high")
+    tags: Optional[List[str]] = Field(default_factory=list)
